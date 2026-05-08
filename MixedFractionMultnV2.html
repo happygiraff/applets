@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    
+    <title>Mixed Fraction Multn V2.cdy</title>
+    <style type="text/css">
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        #CSConsole {
+            background-color: #FAFAFA;
+            border-top: 1px solid #333333;
+            bottom: 0px;
+            height: 200px;
+            overflow-y: scroll;
+            position: fixed;
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cindyjs.org/dist/v0.8/CindyJS.css">
+    <script type="text/javascript" src="https://cindyjs.org/dist/v0.8/Cindy.js"></script>
+<script id="csinit" type="text/x-cindyscript">
+//Arrows
+//
+VArrows(Pt,Val,Sz):=(fillpoly([Pt.xy+[wid,sep],Pt.xy+[0,sep*2],Pt.xy+[-wid,sep]],color->[1,0,0]);fillpoly([Pt.xy+[wid,-sep],Pt.xy+[0,-sep*2],Pt.xy+[-wid,-sep]],color->[0,1,0]);
+drawtext(Pt.xy+[-.2,-.3],Val,size->Sz));
+
+HArrows(Pt,Val,Sz):=(Hwid=Sz/50;Hsep=Sz/50+.2;
+fillpoly([Pt.xy+[1*Hsep,Hwid],Pt.xy+[2*sep,0],Pt.xy+[1*Hsep,-Hwid]],color->[1,0,0]);
+ fillpoly([Pt.xy+[-Hsep,Hwid],Pt.xy+[-sep*2,0],Pt.xy+[-Hsep,-Hwid]],color->[0,1,0]);
+drawtext(Pt.xy+[-.2,-.3],Val,size->Sz));
+
+VAdjArrows(MPos,Pt,Val,MinV,MaxV):=(regional(NewVal,DPM,DPV);
+DMP=dist(MPos.xy,Pt.xy+[0,.5]);
+DMN=dist(MPos.xy,Pt.xy-[0,.5]);
+NewVal=Val;
+if(abs(DMP)<.5,NewVal=Val+1);if(NewVal>MaxV,NewVal=MinV);
+if(abs(DMN)<.5,NewVal=Val-1);if(NewVal<MinV,NewVal=MaxV);
+NewVal);
+
+HAdjArrows(MPos,Pt,Val,MinV,MaxV):=(regional(NewVal,DPM,DMN);
+DMP=dist(MPos.xy,Pt.xy+[.3,0]);
+DMN=dist(MPos.xy,Pt.xy-[.3,0]);
+NewVal=Val;
+if(abs(DMP)<.5,NewVal=Val+1);if(NewVal>MaxV,NewVal=MinV);
+if(abs(DMN)<.5,NewVal=Val-1);if(NewVal<MinV,NewVal=MaxV);
+NewVal);
+;
+//Fns
+//
+;
+//Data
+//
+wid=.6;sep=.6;
+forall([NPt,NNumPt,NDenPt,MPt,MNumPt,MDenPt],#.visible=false);
+
+N=3;M=4;
+Nn=3;Nd=6;
+Mn=7;Md=12;
+;
+
+</script>
+<script id="csmouseclick" type="text/x-cindyscript">
+//Script (CindyScript)
+MPos=mouse();
+
+//if(ButChgeFrns.pressed,
+N=VAdjArrows(MPos,NPt,N,1,5);
+Nn=HAdjArrows(MPos,NNumPt,Nn,0,Nd-1);
+Nd=HAdjArrows(MPos,NDenPt,Nd,1,24);
+
+M=VAdjArrows(MPos,MPt,M,1,5);
+Mn=HAdjArrows(MPos,MNumPt,Mn,0,Md-1);
+Md=HAdjArrows(MPos,MDenPt,Md,1,24);
+//);
+;
+
+</script>
+<script id="csdraw" type="text/x-cindyscript">
+//Script (CindyScript)
+NPt.xy=ButPt.xy+[5,-5];
+ButShowFrns.xy=ButPt.xy+[.5,0];
+ButShadeDiag.xy=ButShowFrns.xy+[0,-1.5];
+ButRandom.xy=ButShadeDiag.xy+[0,-1.5];
+ButShowCalcn.xy=ButShadeDiag.xy+[5,0];
+Sc1.x=Sc0.x;
+Sc=(ScPt.y-Sc0.y)/(Sc1.y-Sc0.y);
+
+NNumPt.xy=NPt.xy+[2,.7];
+NDenPt.xy=NNumPt.xy+[0,-1.4];
+MPt.xy=NPt.xy+[0,-4];
+MNumPt.xy=MPt.xy+[2,.7];
+MDenPt.xy=MNumPt.xy+[0,-1.4];
+
+if(ButRandom.pressed,ButRandom.pressed=false;
+ N=1+randomint(4);
+ M=1+randomint(4);
+ Nd=1+randomint(11);
+ Nn=1+randomint(Nd-1);
+ Md=1+randomint(11);
+ Mn=1+randomint(Md-1);
+);
+
+//number of Rows and number of Cols
+R=N;C=M;
+if(ButShowFrns.pressed,
+draw([NNumPt.xy-[.5,.7],NNumPt.xy+[.5,-.7]],color->[0,0,0],size->2);
+draw([MNumPt.xy-[.5,.7],MNumPt.xy+[.5,-.7]],color->[0,0,0],size->2);
+VArrows(NPt,N,16);
+VArrows(MPt,M,16);
+HArrows(NNumPt,Nn,14);
+HArrows(NDenPt,Nd,14);
+HArrows(MNumPt,Mn,14);
+HArrows(MDenPt,Md,14);
+
+drawtext(NPt.xy-[3,0],"Rows",size->14);
+drawtext(MPt.xy-[4,0],"Columns",size->14);
+);
+
+Rn=Nn;Rd=Nd;Cd=Md;Cn=Mn;
+//Grid
+GHsep=4*Sc;GVsep=4*Sc;
+//Rows of Cols
+GridPts=apply(1..(R+2),r,apply(1..(C+2),c,
+ GridPt+[.5,-.5]+[(c-1)*GVsep,-(r-1)*GHsep]));
+//Grid Lines
+forall(1..(R+2),r,draw([GridPts_r_1,GridPts_r_(C+2)],color->[0,0,0],size->3));
+forall(1..(C+2),c,draw([GridPts_1_c,GridPts_(R+2)_c],color->[0,0,0],size->3));
+
+FineGridPtsTop=
+ apply(1..Cd,nd,GridPts_1_(C+1)+[nd*GHsep/Cd,0])
+ ++flatten(apply(1..C,c,
+  apply(1..(Cd-1),cd,GridPts_(R+1)_c+[cd*GHsep/Cd,0])));
+
+FineGridPtsBot=apply(1..Cd,nd,GridPts_(R+2)_(C+1)+[nd*GHsep/Cd,0])
+ ++flatten(apply(1..C,c,
+  apply(1..(Cd-1),cd,GridPts_(R+2)_c+[cd*GHsep/Cd,0])));
+
+FineGridPtsLt=apply(1..(Rd-1),rd,GridPts_(R+1)_1+[0,-rd*GVsep/Rd])
+ ++flatten(apply(1..(R),r,
+   apply(1..(Rd-1),rd,GridPts_r_(C+1)+[0,-rd*GVsep/Rd])));
+
+FineGridPtsRt=apply(1..(Rd-1),rd,GridPts_(R+1)_(C+2)+[0,-rd*GVsep/Rd])
+ ++flatten(apply(1..R,r,
+  apply(1..(Rd-1),rd,GridPts_r_(C+2)+[0,-rd*GVsep/Rd])));
+
+
+drawall(apply(1..(length(FineGridPtsTop)),k,[FineGridPtsTop_k,FineGridPtsBot_k]),color->[0,0,0]);
+drawall(apply(1..(length(FineGridPtsLt)),k,[FineGridPtsLt_k,FineGridPtsRt_k]),color->[0,0,0]);
+
+drawtext(GridPts_(1)_(C+1)+[GHsep/2-.5,.5],Cd,size->16);
+drawtext(GridPts_(R+2)_1+[-1,GVsep/2],Rd,size->16);
+
+
+if(ButShadeDiag.pressed,
+
+Shades=flatten(apply(1..R,r,apply(1..C,c,[GridPts_r_c,GridPts_r_(c+1),GridPts_(r+1)_(c+1),GridPts_(r+1)_c])));
+forall(Shades,S,fillpoly(S,color->[0,0,1],alpha->.2));
+
+RShades=apply(1..Cn,cn, [GridPts_1_(C+1)+[(cn-1)*GHsep/Cd,0],GridPts_1_(C+1)+[cn*GHsep/Cd,0],GridPts_(R+1)_(C+1)+[cn*GHsep/Cd,0],GridPts_(R+1)_(C+1)+[(cn-1)*GHsep/Cd,0]]);
+
+CShades=apply(1..Rn,rn,
+ [GridPts_(R+1)_1+[0,-(rn-1)*GVsep/Rd],GridPts_(R+1)_(C+1)+[0,-(rn-1)*GVsep/Rd],GridPts_(R+1)_(C+1)+[0,-rn*GVsep/Rd],GridPts_(R+1)_1+[0,-rn*GVsep/Rd]]);
+forall(RShades,RS,fillpoly(RS,color->[.3,.5,0],alpha->.3));
+forall(CShades,CS,fillpoly(CS,color->[.5,.3,0],alpha->.3));
+
+RCShades=flatten(apply(1..Rn,rn,apply(1..Cn,cn,
+ [GridPts_(R+1)_(C+1)+[(cn-1)*GHsep/Cd,-(rn-1)*GVsep/Rd],GridPts_(R+1)_(C+1)+[cn*GHsep/Cd,-(rn-1)*GVsep/Rd],GridPts_(R+1)_(C+1)+[(cn)*GHsep/Cd,-(rn)*GVsep/Rd],GridPts_(R+1)_(C+1)+[(cn-1)*GHsep/Cd,-(rn)*GVsep/Rd]]);
+));
+
+forall(RCShades,S,fillpoly(S,color->[1,0,0],alpha->.2));
+);
+
+CalcnPt.visible=ButShowCalcn.pressed;
+if(ButShowCalcn.pressed,
+F1=N+"x"+"${"+Mn+"}\over{"+Md+"}$";
+F2="${"+Nn+"}\over{"+Nd+"}$ x "+M;
+F12="${"+Nn+"}\over{"+Nd+"}$ x ${"+Mn+"}\over{"+Md+"}$";
+
+ drawtext(CalcnPt.xy+[.5,0],N+"x"+M+" + "+F1+" + "+F2+" + "+F12 ,color->[0,0,0],size->18);
+);
+;
+
+</script>
+    <script type="text/javascript">
+var cdy = CindyJS({
+  scripts: "cs*",
+  defaultAppearance: {
+    dimDependent: 0.7,
+    fontFamily: "sans-serif",
+    lineSize: 1,
+    pointSize: 5.0,
+    textsize: 12.0
+  },
+  angleUnit: "°",
+  geometry: [
+    {name: "NPt", type: "Free", pos: [4.0, -2.0674157303370793, -1.1235955056179778], color: [0.0, 0.0, 0.0], visible: false, size: 2.0},
+    {name: "NNumPt", type: "Free", pos: [2.4566929133858255, -4.0, -1.5748031496062993], color: [0.0, 0.0, 0.0], visible: false, size: 2.0},
+    {name: "NDenPt", type: "Free", pos: [4.0, -2.9230769230769247, -2.564102564102565], color: [0.0, 0.0, 0.0], visible: false, size: 2.0},
+    {name: "MPt", type: "Free", pos: [4.0, 2.4269662921348325, -1.1235955056179778], color: [0.0, 0.0, 0.0], visible: false, size: 2.0},
+    {name: "MNumPt", type: "Free", pos: [4.0, 3.7435897435897467, -2.564102564102565], color: [0.0, 0.0, 0.0], visible: false, size: 2.0},
+    {name: "MDenPt", type: "Free", pos: [-2.1818181818181808, -4.0, 1.3986013986013983], color: [0.0, 0.0, 0.0], visible: false, size: 2.0},
+    {name: "GridPt", type: "Free", pos: [-3.2982456140350878, -4.0, -0.584795321637427], color: [1.0, 1.0, 1.0], size: 3.0},
+    {name: "Sc1", type: "Free", pos: [4.0, 1.9551569506726474, -0.44843049327354256], color: [0.0, 0.0, 0.0], size: 3.0},
+    {name: "Sc0", type: "Free", pos: [-3.811965811965812, -4.0, 0.4273504273504274], color: [0.0, 0.0, 0.0], pinned: true, size: 3.0},
+    {name: "a", type: "Join", color: [0.0, 0.0, 1.0], args: ["Sc1", "Sc0"], visible: false},
+    {name: "ScPt", type: "PointOnLine", pos: [4.0, 1.7578475336322867, -0.4484304932735425], color: [1.0, 1.0, 1.0], args: ["a"], labeled: true, size: 3.0, printname: "Scale"},
+    {name: "sc", type: "Segment", color: [0.0, 0.0, 0.0], args: ["Sc1", "Sc0"]},
+    {name: "ButPt", type: "Free", pos: [4.0, -3.196261682242991, -0.4672897196261682], color: [1.0, 1.0, 1.0], size: 3.0},
+    {name: "CalcnPt", type: "Free", pos: [4.0, 0.26046511627906976, -0.46511627906976744], color: [1.0, 1.0, 1.0], visible: false, size: 3.0},
+    {name: "ButShowFrns", type: "ToggleButton", pos: [4.0, -3.3945409429280398, -0.49627791563275436], color: [0.0, 0.0, 0.0], fillcolor: [1.0, 1.0, 1.0], fillalpha: 0.27272728085517883, text: "Show Fractions"},
+    {name: "ButShadeDiag", type: "ToggleButton", pos: [4.0, -2.6501240694789083, -0.49627791563275436], color: [0.0, 0.0, 0.0], fillcolor: [1.0, 1.0, 1.0], fillalpha: 0.27272728085517883, text: "Shade Diagram"},
+    {name: "ButRandom", type: "ToggleButton", pos: [4.0, -1.905707196029777, -0.49627791563275436], color: [0.0, 0.0, 0.0], fillcolor: [1.0, 1.0, 1.0], fillalpha: 0.27272728085517883, text: "Random Choice"},
+    {name: "ButShowCalcn", type: "ToggleButton", pos: [2.292134831460673, -4.0, -0.7490636704119851], color: [0.0, 0.0, 0.0], fillcolor: [1.0, 1.0, 1.0], fillalpha: 0.27272728085517883, text: "Show Calcn"}
+  ],
+  ports: [{
+    width: 1348,
+    height: 677,
+    id: "CSCanvas",
+    transform: [{visibleRect: [-10.3, 9.38, 43.62, -17.7]}],
+    background: "rgb(252,250,255)"
+  }],
+  csconsole: false,
+  use: ["katex"],
+  cinderella: {build: 2125, version: [3, 0, 2125]}
+});
+    </script>
+</head>
+<body>
+    <div id="CSCanvas"></div>
+</body>
+</html>
