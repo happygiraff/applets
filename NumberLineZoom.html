@@ -2,26 +2,46 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    
-    <title>NumberLine Zoom.cdy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NumberLine Zoom</title>
+
     <style type="text/css">
         * {
-            margin: 0px;
-            padding: 0px;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        #CSConsole {
-            background-color: #FAFAFA;
-            border-top: 1px solid #333333;
-            bottom: 0px;
-            height: 200px;
-            overflow-y: scroll;
-            position: fixed;
+
+        html,
+        body {
             width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #CSCanvas {
+            width: 680px !important;
+            height: 360px !important;
+            max-width: 100vw;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        #CSConsole {
+            display: none;
         }
     </style>
-    <link rel="stylesheet" href="https://cindyjs.org/dist/v0.8/CindyJS.css">
-    <script type="text/javascript" src="https://cindyjs.org/dist/v0.8/Cindy.js"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cindyjs.org/dist/v0.8/CindyJS.css">
+
+    <script
+        type="text/javascript"
+        src="https://cindyjs.org/dist/v0.8/Cindy.js">
+    </script>
+</head>
 <script id="csinit" type="text/x-cindyscript">
 //Functions
 
@@ -254,11 +274,13 @@ var cdy = CindyJS({
     {name: "ButZoomIn", type: "ToggleButton", pos: [4.0, -3.3103448275862073, -0.5305039787798409], color: [0.098, 0.62, 0.306], fillcolor: [1.0, 1.0, 1.0], fillalpha: 0.27272728085517883, text: "Zoom In", textsize: 14.0}
   ],
   ports: [{
-    width: 1318,
-    height: 677,
     id: "CSCanvas",
-    transform: [{visibleRect: [-10.42, 10.58, 42.3, -16.5]}],
-    background: "rgb(255,253,232)"
+  width: 680,
+  height: 360,
+  background: "rgb(255,253,232)"
+  transform: [{
+    visibleRect: [-4, 10, 30, -13]
+  }]
   }],
   csconsole: false,
   cinderella: {build: 2125, version: [3, 0, 2125]}
